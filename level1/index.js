@@ -3,6 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import {ChatGoogle} from "@langchain/google";
+import {ChatGroq} from "@langchain/groq";
 dotenv.config();
 
 const app = express();
@@ -50,14 +51,42 @@ app.use(express.json());
 
 //Langchain
 
+// app.post("/chat", async (req, res) => {
+//     const { prompt } = req.body;
+//     const ai = new ChatGoogle({
+//         model: "gemini-3-flash-preview",
+//         temperature: 0.7,
+//         maxOutputTokens: 1000,
+//     })
+//     const result=await ai.invoke([
+//         {
+//             role:"system",
+//             content:"you are jarvis and my assistant"
+//         },
+//         {
+//             role:"human",
+//             content:prompt
+//         }
+//     ])
+//     return res.json(result.content)
+// })
+
+
 app.post("/chat", async (req, res) => {
     const { prompt } = req.body;
-    const ai = new ChatGoogle({
-        model: "gemini-3-flash-preview",
-        temperature: 0.7,
-        maxOutputTokens: 1000,
+    const ai = new ChatGroq({
+        model: "openai/gpt-oss-120b",
     })
-    const result=await ai.invoke(prompt)
+    const result=await ai.invoke([
+        {
+            role:"system",
+            content:"you are jarvis and my assistant"
+        },
+        {
+            role:"human",
+            content:prompt
+        }
+    ])
     return res.json(result.content)
 })
 
